@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # em1tao
-
 import easygui
 
 print("Choose image file")
