@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # em1tao
+
 import easygui
 
 print("Choose image file")
@@ -26,3 +27,4 @@ while True:
             continue
     else:
         tags.append(tag)
+
