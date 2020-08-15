@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # em1tao
+import loader
 import easygui
 
 print("Choose image file")
@@ -13,17 +14,19 @@ while True:
         print("Choose image file")
 
 print("Enter some tags (for example hair color) \n Type '.' to stop")
-tags = []
+TAGS = []
 tag = ""
 
 while True:
     tag = input(":")
     if tag == ".":
-        if len(tags) >= 1:
+        if len(TAGS) >= 1:
             break
         else:
             print("Write at least 1 tag")
             continue
     else:
-        tags.append(tag)
+        TAGS.append(tag)
 
+TAGS_STRING = "+".join(TAGS)
+loader.main(screenshot, TAGS_STRING)
