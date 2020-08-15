@@ -2,6 +2,7 @@
 # em1tao
 import loader
 import easygui
+import re
 
 print("Choose image file")
 
