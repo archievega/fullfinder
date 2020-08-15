@@ -29,5 +29,7 @@ while True:
     else:
         TAGS.append(tag)
 
-TAGS_STRING = "+".join(TAGS)
-loader.main(screenshot, TAGS_STRING)
+number_of_pages = int(input("Number of pages (Max 5)"))
+TAGS= "+".join(TAGS)
+loader.main(screenshot, TAGS, number_of_pages)
+
