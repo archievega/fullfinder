@@ -10,8 +10,7 @@ while True: # picks original image
     if screenshot_link[-3::] == "png" or screenshot_link[-3::] == "jpg":
         print(f"You choose '{screenshot_link}'")
         break
-    else:
-        print("Choose image file")
+    print("Choose image file")
 
 print("Enter some tags (for example hair color) \nType '.' to stop")
 TAGS = []
