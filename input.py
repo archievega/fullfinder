@@ -1,10 +1,11 @@
+"""Accepts original image and tags."""
 # -*- coding: utf-8 -*-
 import easygui
 import loader
 
 print("Choose image file")
 
-while True: # pick original photo
+while True: # picks original image
     screenshot_link = easygui.fileopenbox()
     if screenshot_link[-3::] == "png" or screenshot_link[-3::] == "jpg":
         print(f"You choose '{screenshot_link}'")
@@ -19,8 +20,7 @@ while True:
     tag = input(":")
     if tag == "." and 1 <= len(TAGS) <= 10:
         break
-    else:
-        TAGS.append(tag)
+    TAGS.append(tag)
 
 
 while True:
@@ -41,4 +41,3 @@ TAGS = list(map(lambda x: x.replace(" ", "+"), TAGS))
 
 TAGS = "+".join(TAGS)
 loader.main(screenshot_link, TAGS, number_of_pages)
-

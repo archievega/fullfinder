@@ -3,7 +3,7 @@ import cv2
 
 def calc_image_hash(image):
     """Function for calculate hash."""
-    resized = cv2.resize(image, (8,8), interpolation = cv2.INTER_AREA) # Resize image
+    resized = cv2.resize(image, (8, 8), interpolation=cv2.INTER_AREA) # Resize image
     gray_image = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY) # Convert it to black and whit
     avg = gray_image.mean() # Average pixel value
     _, threshold_image = cv2.threshold(gray_image, avg, 255, 0) # Threshold binarization
