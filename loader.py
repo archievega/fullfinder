@@ -3,28 +3,30 @@
 
 import requests
 from bs4 import BeautifulSoup
-import time
+import cv2
+from io import BytesIO
+import numpy as np
+import compare
 
-bad_chars = {bad_char: '' for bad_char in '\/:*?"<>|'} 
 
-def main(image, tags, number_of_pages):
+def main(screenshot_link, tags, number_of_pages):
     s = requests.session()
-    search_url = "https://pornhub.com/video/search?search=" + tags
-    main_req = s.get(search_url)
-    parsed_html = BeautifulSoup(main_req.content, "lxml")
-    search_result = parsed_html.find("ul", {"id": "videoSearchResult"})
-    video_items = search_result.findAll("li")
-    for video_item in video_items[1::]:
-        try:
-            img_object = video_item.find("img")
-            img_source = img_object["data-src"]
-            img_get = requests.get(img_source)
-            img_key = video_item["_vkey"]
-            img_file = open(img_key+".png", "wb")
-            img_file.write(img_get.content)
-            img_file.close
-        except:
-            continue
-         
-    
-
+    screenshot = cv2.imread(screenshot_link)
+    for page_num in range(1, number_of_pages+1):
+        search_url = f"https://pornhub.com/video/search?search={tags}&page={page_num}"
+        main_req = s.get(search_url)
+        parsed_html = BeautifulSoup(main_req.content, "lxml")
+        search_result = parsed_html.find("ul", {"id": "videoSearchResult"})
+        video_items = search_result.findAll("li")
+        for video_item in video_items[1::]:
+            try:
+                img_object = video_item.find("img")
+                img_source = img_object["data-src"]
+                img_get = requests.get(img_source)
+                img_stream = BytesIO(img_get.content)
+                img = cv2.imdecode(np.fromstring(img_stream.read(), np.uint8), 1)
+                if compare.CompareImage(screenshot, img) <= 1:
+                    print(f"https://rt.pornhub.com/view_video.php?viewkey={video_item['_vkey']}")
+            except Exception as E:
+                print(E)
+                continue
