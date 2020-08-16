@@ -1,25 +1,25 @@
-import difflib
+"""Module for working with images."""
 import cv2
 
-# Function for calculate hash
 def calc_image_hash(image):
+    """Function for calculate hash."""
     resized = cv2.resize(image, (8,8), interpolation = cv2.INTER_AREA) # Resize image
     gray_image = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY) # Convert it to black and whit
     avg = gray_image.mean() # Average pixel value
-    ret, threshold_image = cv2.threshold(gray_image, avg, 255, 0) # Threshold binarization
+    _, threshold_image = cv2.threshold(gray_image, avg, 255, 0) # Threshold binarization
     # Calculate the hash
     _hash = ""
-    for x in range(8):
-        for y in range(8):
-            val = threshold_image[x,y]
+    for x_coordinate in range(8):
+        for y_coordinate in range(8):
+            val = threshold_image[x_coordinate, y_coordinate]
             if val == 255:
                 _hash = _hash+"1"
             else:
                 _hash = _hash+"0"
     return _hash
 
-# Compare two hashes
 def compare_image(image1, image2):
+    """Compare two hashes."""
     hash1 = calc_image_hash(image1)
     hash2 = calc_image_hash(image2)
     i = 0
