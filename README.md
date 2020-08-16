@@ -1,2 +1,2 @@
 # fullfinder
-Finds full video on pornhub by screen and tags
+Finds video on pornhub by image and tags
