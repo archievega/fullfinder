@@ -7,14 +7,13 @@ from io import BytesIO
 import numpy as np
 import compare
 
-
+"""Search original image in PornHub's previews."""
 def main(screenshot_link, tags, number_of_pages):
-    s = requests.session()
-    screenshot = cv2.imread(screenshot_link)
-    """Check every page."""
+    session = requests.session()
+    original_image = cv2.imread(screenshot_link) # read original image
     for page_num in range(1, number_of_pages+1):
         search_url = f"https://pornhub.com/video/search?search={tags}&page={page_num}"
-        main_req = s.get(search_url)
+        main_req = session.get(search_url)
         parsed_html = BeautifulSoup(main_req.content, "lxml")
         search_result = parsed_html.find("ul", {"id": "videoSearchResult"})
         video_items = search_result.findAll("li")
@@ -28,8 +27,8 @@ def main(screenshot_link, tags, number_of_pages):
                 """Convert bytestring to image."""
                 img_stream = BytesIO(img_get.content)
                 img = cv2.imdecode(np.fromstring(img_stream.read(), np.uint8), 1)
-            
-                if compare.CompareImage(screenshot, img) <= 2:
+
+                if compare.compare_image(original_image, img) <= 15:
                     print(f"https://rt.pornhub.com/view_video.php?viewkey={video_item['_vkey']}")
-            except Exception as E:
+            except Exception:
                 continue
