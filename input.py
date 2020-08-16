@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 # em1tao
 import loader
-import easygui  # pick original photo
+import easygui
 
 
 print("Choose image file")
 
-while True:
+while True: # pick original photo
     screenshot_link = easygui.fileopenbox()
     if screenshot_link[-3::] == "png" or screenshot_link[-3::] == "jpg":
         print(f"You choose '{screenshot_link}'")

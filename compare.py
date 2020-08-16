@@ -1,13 +1,13 @@
 import cv2
 import difflib
  
-# Функция вычисления хэша
+# Function for calculate hash
 def CalcImageHash(image):
-    resized = cv2.resize(image, (8,8), interpolation = cv2.INTER_AREA) # Уменьшим картинку
-    gray_image = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY) # Переведем в черно-белый формат
-    avg=gray_image.mean() # Среднее значение пикселя
-    ret, threshold_image = cv2.threshold(gray_image, avg, 255, 0) # Бинаризация по порогу
-    # Рассчитаем хэш
+    resized = cv2.resize(image, (8,8), interpolation = cv2.INTER_AREA) # Resize image
+    gray_image = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY) # Convert it to black and whit
+    avg=gray_image.mean() # Average pixel value
+    ret, threshold_image = cv2.threshold(gray_image, avg, 255, 0) # Threshold binarization
+    # Calculate the hash
     _hash=""
     for x in range(8):
         for y in range(8):
@@ -18,14 +18,14 @@ def CalcImageHash(image):
                 _hash=_hash+"0"
     return _hash
  
+# Compare two hashes
 def CompareImage(image1, image2):
     hash1 = CalcImageHash(image1)
-    l = len(hash1)
     hash2 = CalcImageHash(image2)
-    i=0
-    count=0
-    while i<l:
-        if hash1[i]!=hash2[i]:
-            count=count+1
-        i=i+1
+    i = 0
+    count = 0
+    while i < len(hash1):
+        if hash1[i] != hash2[i]:
+            count += 1
+        i += 1
     return count
