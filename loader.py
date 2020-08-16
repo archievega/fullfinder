@@ -25,8 +25,7 @@ def main(screenshot_link, tags, number_of_pages):
                 img_get = requests.get(img_source) # Convert bytestring to image
                 img_stream = BytesIO(img_get.content)
                 img = cv2.imdecode(np.fromstring(img_stream.read(), np.uint8), 1)
-
-                if compare.compare_image(original_image, img) <= 15:
+                if compare.compare_image(original_image, img) <= 12:
                     print(f"https://rt.pornhub.com/view_video.php?viewkey={video_item['_vkey']}")
             except IndexError:
                 continue
