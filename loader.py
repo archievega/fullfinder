@@ -3,18 +3,16 @@
 # em1tao
 from io import BytesIO
 import requests
+from threading import Thread
 from bs4 import BeautifulSoup
-import cv2
-import numpy as np
-import compare
+from imagehash import average_hash
+from PIL import Image
 
 def main(screenshot_link, tags, number_of_pages):
     """Search original image in PornHub's previews."""
-    session = requests.session()
-    original_image = cv2.imread(screenshot_link) # read original image
-    for page_num in range(1, number_of_pages+1):
-        search_url = f"https://pornhub.com/video/search?search={tags}&page={page_num}"
-        main_req = session.get(search_url)
+    def page_parser(page_count, tags, *_):
+        """Parses one of the page."""
+        main_req = session.get(f"https://pornhub.com/video/search?search={tags}&page={page_count}")
         parsed_html = BeautifulSoup(main_req.content, "lxml")
         search_result = parsed_html.find("ul", {"id": "videoSearchResult"})
         video_items = search_result.findAll("li")
@@ -23,9 +21,20 @@ def main(screenshot_link, tags, number_of_pages):
                 img_object = video_item.find("img") # Get an object and it's attributes
                 img_source = img_object["data-src"]
                 img_get = requests.get(img_source) # Convert bytestring to image
-                img_stream = BytesIO(img_get.content)
-                img = cv2.imdecode(np.fromstring(img_stream.read(), np.uint8), 1)
-                if compare.compare_image(original_image, img) <= 12:
-                    print(f"https://rt.pornhub.com/view_video.php?viewkey={video_item['_vkey']}")
-            except IndexError:
+                img = Image.open(BytesIO(img_get.content)).convert("RGB")
+                if average_hash(original_image) - average_hash(img) <= 15:
+                    print(f"https://pornhub.com/view_video.php?viewkey={video_item['_vkey']}")
+            except TypeError:
                 continue
+            except AttributeError:
+                continue
+
+    session = requests.session()
+    original_image = Image.open(screenshot_link) # read original image
+    threads = []
+    for page_num in range(1, number_of_pages+1):
+        thread = Thread(target=page_parser, args=(page_num, tags))
+        thread.start()
+        threads.append(thread)
+    for thread in threads:
+        thread.join()

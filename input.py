@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 import easygui
 import loader
+from datetime import datetime
 
+start_time = datetime.now()
 print("Choose image file")
 
 while True: # picks original image
@@ -21,22 +23,21 @@ while True:
         break
     TAGS.append(tag)
 
-
 while True:
     try:
-        number_of_pages = int(input("Number of pages (Max 5): "))
+        NUMBER_OF_PAGES = int(input("Number of pages (Max 5): "))
         break
     except ValueError:
         print("Enter a normal number")
-        continue
 
 
-if number_of_pages > 5:
-    number_of_pages = 5
-elif number_of_pages < 1:
-    number_of_pages = 1
+if NUMBER_OF_PAGES > 5:
+    NUMBER_OF_PAGES = 5
+elif NUMBER_OF_PAGES < 1:
+    NUMBER_OF_PAGES = 1
 
 TAGS = list(map(lambda x: x.replace(" ", "+"), TAGS))
 
 TAGS = "+".join(TAGS)
-loader.main(screenshot_link, TAGS, number_of_pages)
+loader.main(screenshot_link, TAGS, NUMBER_OF_PAGES)
+print(datetime.now() - start_time)
