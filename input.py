@@ -1,14 +1,14 @@
 """Accepts original image and tags."""
 # -*- coding: utf-8 -*-
-import easygui
-import loader
 from datetime import datetime
+from easygui import fileopenbox
+import loader
 
 start_time = datetime.now()
 print("Choose image file")
 
 while True: # picks original image
-    screenshot_link = easygui.fileopenbox()
+    screenshot_link = fileopenbox()
     if screenshot_link[-3::] == "png" or screenshot_link[-3::] == "jpg":
         print(f"You choose '{screenshot_link}'")
         break
