@@ -1,2 +1,4 @@
-# fullfinder
-Finds full video on pornhub by screen and tags
+# FullFinder
+Finds video on PornHub by image and tags
+
+Run input.py to start
