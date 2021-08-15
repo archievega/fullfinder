@@ -38,7 +38,7 @@ class Page(Thread):
         return average_hash(Page.original_image) - average_hash(image) <= 16
 
 
-def main(screenshot_path: list, tags: list) -> list:
+def main(screenshot_path: str, tags: list) -> list:
     Page.original_image = Image.open(screenshot_path)
     Page.tags = "+".join(tags)
     pages = [Page() for x in range(1, 4)]
