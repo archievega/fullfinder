@@ -1,52 +1,48 @@
-"""Loads PornHub and gets previews from videos."""
-# -*- coding: utf-8 -*-
+import requests
+import httplib2
 from io import BytesIO
 from threading import Thread
-import requests
 from bs4 import BeautifulSoup
 from imagehash import average_hash
 from PIL import Image
 
-def main(screenshot_path, tags, number_of_pages):
-    """Search original image in PornHub's previews."""
-    class Page(Thread):
-        """Page class"""
-        TAGS = tags
-        def __init__(self, link, *args, **kwargs):
-            """Initialize page object."""
-            super(Page, self).__init__(*args, **kwargs)
-            self.link = link
-            self.fulls = []
 
-        def run(self):
-            """Parses one of the page."""
-            main_req = session.get(self.link)
-            parsed_html = BeautifulSoup(main_req.content, "lxml")
-            search_result = parsed_html.find("ul", {"id": "videoSearchResult"})
-            video_items = search_result.findAll("li")
-            for video_item in video_items[1::]:
-                try:
-                    img_object = video_item.find("img") # Get an object and it's attributes
-                    img_source = img_object["data-src"]
-                    img_get = requests.get(img_source) # Convert bytestring to image
-                    img = Image.open(BytesIO(img_get.content)).convert("RGB")
-                    if average_hash(original_image) - average_hash(img) <= 15:
-                        self.fulls.append(f"https://pornhub.com/view_video.php?viewkey={video_item['_vkey']}")
-                except TypeError as Exception:
-                    print(Exception)
-                    continue
-                except AttributeError as Exception:
-                    print(Exception)
-                    continue
+class Page(Thread):
+    pageCount = 1
+    fulls: list = []
+    titles: list = []
 
-    session = requests.session()
-    original_image = Image.open(screenshot_path) # Read original image
-    pages = []
-    for page_count in range(1, number_of_pages+1):
-        page = Page(link=f"https://pornhub.com/video/search?search={tags}&page={page_count}") # Create page objects
-        pages.append(page)
+    def __init__(self):
+        super().__init__()
+        self.link = f"https://pornhub.com/video/search?search={Page.tags}&page={Page.pageCount}"
+        Page.pageCount += 1
+
+    def run(self):
+        """Parses one of the page."""
+        main_request = requests.get(self.link)
+        parsed_html = BeautifulSoup(main_request.content, "lxml")
+        if search_result:= parsed_html.find("ul", {"id": "videoSearchResult"}):
+            video_items = search_result.findAll("li")[1::]
+            for video_item in video_items:
+                preview_tag = video_item.find("img")
+                preview_url = preview_tag["data-src"]
+                image_driver = httplib2.Http('.cache')
+                _, preview_bytes = image_driver.request(preview_url)
+                preview_image = Image.open(BytesIO(preview_bytes)).convert("RGB")
+                if self.are_similar(preview_image):
+                    video_id = video_item['data-video-vkey']
+                    Page.fulls.append(f"https://pornhub.com/view_video.php?viewkey={video_id}")
+                    Page.titles.append(preview_tag["alt"])
+
+    def are_similar(self, image) -> bool:
+        return average_hash(Page.original_image) - average_hash(image) <= 16
+
+
+def main(screenshot_path: list, tags: list) -> list:
+    Page.original_image = Image.open(screenshot_path)
+    Page.tags = "+".join(tags)
+    pages = [Page() for x in range(1, 4)]
     for page in pages:
         page.start()
-    for page in pages:
         page.join()
-        print(*page.fulls, sep="\n")
+    return [Page.fulls, Page.titles]

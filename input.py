@@ -1,43 +1,25 @@
-"""Accepts original image and tags."""
-# -*- coding: utf-8 -*-
-from datetime import datetime
-from easygui import fileopenbox
 import loader
 
-start_time = datetime.now()
-print("Choose image file")
-
-while True: # picks original image
-    screenshot_link = fileopenbox()
-    if screenshot_link[-3::] == "png" or screenshot_link[-3::] == "jpg":
+while True:
+    print("Choose image file")
+    screenshot_link = input(":")
+    if screenshot_link[-3::] in ("png","jpg"):
         print(f"You choose '{screenshot_link}'")
         break
-    print("Choose image file")
 
+tags = []
 print("Enter some tags (for example hair color) \nType '.' to stop")
-TAGS = []
 
 while True:
     tag = input(":")
-    if tag == "." and 1 <= len(TAGS) <= 10:
+    if tag == "." and 1 <= len(tags) or len(tags) > 5:
         break
-    TAGS.append(tag)
+    tags.append(tag.strip())
 
-while True:
-    try:
-        NUMBER_OF_PAGES = int(input("Number of pages (Max 5): "))
-        break
-    except ValueError:
-        print("Enter a normal number")
+links,titles = loader.main(screenshot_path=screenshot_link,tags=tags)
 
-
-if NUMBER_OF_PAGES > 5:
-    NUMBER_OF_PAGES = 5
-elif NUMBER_OF_PAGES < 1:
-    NUMBER_OF_PAGES = 1
-
-TAGS = list(map(lambda x: x.replace(" ", "+"), TAGS))
-
-TAGS = "+".join(TAGS)
-loader.main(screenshot_link, TAGS, NUMBER_OF_PAGES)
-print(datetime.now() - start_time)
+for i in range(len(links)):
+    print(titles[i])
+    print(links[i])
+    print()
+    
